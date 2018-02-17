@@ -3,22 +3,14 @@
 import Foundation
 
 public class BinarySearchTree<T: Comparable> {
+  //MARK: - Private properties
+
   private(set) public var value: T
   private(set) public var parent: BinarySearchTree?
   private(set) public var left: BinarySearchTree?
   private(set) public var right: BinarySearchTree?
 
-  public init(value: T) {
-    self.value = value
-  }
-
-  public convenience init(array: [T]) {
-    precondition(array.count > 0)
-    self.init(value: array.first!)
-    for v in array.dropFirst() {
-      insert(v)
-    }
-  }
+  //MARK: - Public properties
 
   public var isRoot: Bool {
     return parent == nil
@@ -55,6 +47,22 @@ public class BinarySearchTree<T: Comparable> {
   public var count: Int {
     return (left?.count ?? 0) + 1 + (right?.count ?? 0)
   }
+
+  //MARK: - Initialization
+
+  public init(value: T) {
+    self.value = value
+  }
+
+  public convenience init(array: [T]) {
+    precondition(array.count > 0)
+    self.init(value: array.first!)
+    for v in array.dropFirst() {
+      insert(v)
+    }
+  }
+
+  //MARK: - Public functions
 
   public func insert(_ value: T) {
     if value < self.value {
@@ -213,6 +221,15 @@ public class BinarySearchTree<T: Comparable> {
     }
   }
 
+  public func isBST(minValue: T, maxValue: T) -> Bool {
+    if value < minValue || value > maxValue { return false }
+    let leftBST = left?.isBST(minValue: minValue, maxValue: value) ?? true
+    let rightBST = right?.isBST(minValue: value, maxValue: maxValue) ?? true
+    return leftBST && rightBST
+  }
+
+  //MARK: - Private functions
+
   private func reconnectParentToNode(_ node: BinarySearchTree?) {
     if let parent = parent {
       if isLeftChild {
@@ -223,14 +240,9 @@ public class BinarySearchTree<T: Comparable> {
     }
     node?.parent = parent
   }
-
-  public func isBST(minValue: T, maxValue: T) -> Bool {
-    if value < minValue || value > maxValue { return false }
-    let leftBST = left?.isBST(minValue: minValue, maxValue: value) ?? true
-    let rightBST = right?.isBST(minValue: value, maxValue: maxValue) ?? true
-    return leftBST && rightBST
-  }
 }
+
+//MARK: - Custom String Convertible extension
 
 extension BinarySearchTree: CustomStringConvertible {
   public var description: String {
