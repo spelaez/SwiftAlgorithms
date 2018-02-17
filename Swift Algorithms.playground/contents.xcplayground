@@ -4,5 +4,6 @@
         <page name='Binary Search'/>
         <page name='Insertion Sort'/>
         <page name='Binary Search Tree'/>
+        <page name='Binary Search Tree Enum'/>
     </pages>
 </playground>
