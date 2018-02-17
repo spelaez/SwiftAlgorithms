@@ -24,7 +24,7 @@ public class BinarySearchTree<T: Comparable> {
     return parent == nil
   }
 
-  public var isLeaft: Bool {
+  public var isLeaf: Bool {
     return left == nil && right == nil
   }
 
@@ -144,6 +144,75 @@ public class BinarySearchTree<T: Comparable> {
     return node
   }
 
+  @discardableResult public func remove() -> BinarySearchTree? {
+    let replacement: BinarySearchTree?
+
+    if let right = right {
+      replacement = right.minimum()
+    } else if let left = left {
+      replacement = left.maximum()
+    } else {
+      replacement = nil
+    }
+
+    replacement?.remove()
+    replacement?.right = right
+    replacement?.left = left
+    right?.parent = replacement
+    left?.parent = replacement
+    reconnectParentToNode(replacement)
+
+    parent = nil
+    left = nil
+    right = nil
+
+    return replacement
+  }
+
+  public func height() -> Int {
+    if isLeaf {
+      return 0
+    } else {
+      return 1 + max(left?.height() ?? 0, right?.height() ?? 0)
+    }
+  }
+
+  public func depth() -> Int {
+    var node = self
+    var edges = 0
+    while let parent = node.parent {
+      node = parent
+      edges += 1
+    }
+    return edges
+  }
+
+  public func predecessor() -> BinarySearchTree? {
+    if let left = left {
+      return left.maximum()
+    } else {
+      var node = self
+      while let parent = node.parent {
+        if parent.value < value { return parent }
+        node = parent
+      }
+      return nil
+    }
+  }
+
+  public func sucessor() -> BinarySearchTree? {
+    if let right = right {
+      return right.minimum()
+    } else {
+      var node = self
+      while let parent = node.parent {
+        if parent.value > value { return parent }
+        node = parent
+      }
+      return nil
+    }
+  }
+
   private func reconnectParentToNode(_ node: BinarySearchTree?) {
     if let parent = parent {
       if isLeftChild {
@@ -153,6 +222,13 @@ public class BinarySearchTree<T: Comparable> {
       }
     }
     node?.parent = parent
+  }
+
+  public func isBST(minValue: T, maxValue: T) -> Bool {
+    if value < minValue || value > maxValue { return false }
+    let leftBST = left?.isBST(minValue: minValue, maxValue: value) ?? true
+    let rightBST = right?.isBST(minValue: value, maxValue: maxValue) ?? true
+    return leftBST && rightBST
   }
 }
 
@@ -187,5 +263,18 @@ print(tree.searchIterative(10)!)
 tree.traverseInOrder { print($0) }
 
 tree.toArray()
+tree.height()
+
+if let node9 = tree.search(9) {
+  node9.depth()
+}
+
+if let node1 = tree.search(1) {
+  tree.isBST(minValue: Int.min, maxValue: Int.max)
+  node1.insert(100)
+  tree.search(100)
+  tree.isBST(minValue: Int.min, maxValue: Int.max)
+}
+
 
 //: [Next](@next)
