@@ -96,6 +96,4 @@ list.node(atIndex: 1).value
 list[0]
 list[1]
 
-
-
 //: [Next](@next)
