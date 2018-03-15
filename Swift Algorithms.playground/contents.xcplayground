@@ -14,5 +14,6 @@
         <page name='Palindrome'/>
         <page name='Queue'/>
         <page name='Stack'/>
+        <page name='Select Minimum Maximum'/>
     </pages>
 </playground>
